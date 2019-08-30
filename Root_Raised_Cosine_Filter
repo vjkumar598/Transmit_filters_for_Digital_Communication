@@ -1,0 +1,30 @@
+%Root_raised_cosine_filter in time domain.
+%m : oversampling factor
+%a : excess bandwidth
+%l : truncate the pulse from -l to l
+
+function [p,time] = root_raised_cosine_pulse(a,m,l)
+                   length_os = floor(m * l); %length of one side
+                   t_os = ((1:length_os)/m)'; % one sided time vector
+                   
+                   f1 = 4 * a * cos(pi * (1 + a) * t_os);
+                   f2 = (sin(pi * (1-a) * t_os))./(t_os);
+                   f3 = pi * (1 - (4 * a * t_os).^2);
+                   
+                   z = m / (4 * a); % zero by zero check!
+                   if(z == floor(z))
+                       f1(z)= -4 * a * pi * (1 + a) * cos(pi/(2 * a));%by L_H rule
+                       f2(z)= (2 * a * pi * (1-a) * sin(pi/(2 * a))) + (((2 * a)^2)*cos(pi/(2 * a)));
+                       f3(z)= -16 * pi * a;
+                   end
+                   
+                   p_os = (f1 + f2)./ (f3); %one sided pulse
+                   p = [flipud(p_os);1;p_os]; %two sided pulse
+                   time = (-length_os : length_os)./m;
+end
+                   
+                   
+               
+           
+           
+           
