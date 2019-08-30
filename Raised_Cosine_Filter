@@ -1,0 +1,29 @@
+%Implementing raised_cosine_transmit_filter for Digital Communication in MATLAB
+%raised_cosine_filter in time domain.
+%m : oversampling factor
+%a : excess bandwidth
+%l : truncate the pulse from -l to l
+function [p,time] = raised_cosine_pulse(a,m,l)
+                   length_os = floor(m * l);%length of one side
+                   t_os = ((1:length_os)/m)';%time of one side
+                   
+                   f1 = sin(pi * t_os) ./ (pi * t_os);
+                   f2 = cos(pi * a * t_os);
+                   f3 = 1 - (2 * a * t_os).^2;
+                   
+                   z = m / (2 * a);%zero by zero condition check
+                   if(z == floor(z))
+                       f2(z)= pi * a;%by L-Hospitals rule
+                       f3(z)= 4 * a;%by L-Hospitals rule
+                   end
+                   
+                   p_os = (f1 .* f2) ./ f3;%one sided pulse
+                   p = [flipud(p_os);1;p_os];
+                   time = (-length_os : length_os)./m;
+end
+                   
+                   
+               
+           
+           
+           
